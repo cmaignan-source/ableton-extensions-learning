@@ -1,5 +1,5 @@
 {
-    "name": "my-extension",
+    "name": "show_tempo",
     "author": "Christophe MAIGNAN",
     "entry": "dist/extension.js",
     "version": "1.0.0",

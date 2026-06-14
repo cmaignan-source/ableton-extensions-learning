@@ -6,17 +6,22 @@ import bundledInterface from "../ui/interface.html";
 export function activate(activation: ActivationContext) {
   const context = initialize(activation, "1.0.0");
 
-  console.log("Extension activée");
+  console.log("Show Tempo extension activated");
 
-  const dataModel = (context.application as any).dataModel;
-  const root = dataModel.getRoot();
-  const song = dataModel.rootGetSong(root);
-  const bpm = dataModel.songGetTempo(song);
+  context.commands.registerCommand("show_tempo.showDialog", () => {
+    // Read the current tempo from the Live Set data model.
+    const dataModel = (context.application as any).dataModel;
+    const root = dataModel.getRoot();
+    const song = dataModel.rootGetSong(root);
+    const bpm: number = dataModel.songGetTempo(song);
 
-  console.log("BPM actuel :", bpm);
+    console.log("Current BPM:", bpm);
 
-  context.commands.registerCommand("my-extension.showDialog", () => {
-    const url = `data:text/html,${encodeURIComponent(bundledInterface)}`;
+    // Inject BPM into the HTML string before encoding.
+    // The placeholder "{{BPM}}" in interface.html is replaced with the actual value.
+    const injectedHtml = bundledInterface.replace("{{BPM}}", bpm.toFixed(2));
+    const url = `data:text/html,${encodeURIComponent(injectedHtml)}`;
+
     context.ui.showModalDialog(url, 320, 160).then((result) => {
       console.log(`Dialog closed with: ${result}`);
     });
@@ -24,7 +29,7 @@ export function activate(activation: ActivationContext) {
 
   context.ui.registerContextMenuAction(
     "AudioClip",
-    "Open my-extension",
-    "my-extension.showDialog",
+    "Show Tempo",
+    "show_tempo.showDialog",
   );
 }

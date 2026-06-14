@@ -1,23 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Dialog</title>
-    <script>
-      // Send a result back to the extension host and close this dialog.
-      // The string you pass becomes the value `dialog.show(...)` resolves with.
-      function closeWithResult(result) {
-        const message = { method: "close_and_send", params: [result] };
-        if (window.webkit?.messageHandlers?.live) {
-          window.webkit.messageHandlers.live.postMessage(message);
-        } else if (window.chrome?.webview) {
-          window.chrome.webview.postMessage(message);
-        }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show Tempo</title>
+  <script>
+    function closeWithResult(result) {
+      const message = {
+        method: "close_and_send",
+        params: [JSON.stringify(result)]
+      };
+      if (window.webkit?.messageHandlers?.live) {
+        window.webkit.messageHandlers.live.postMessage(message);
+      } else if (window.chrome?.webview) {
+        window.chrome.webview.postMessage(message);
       }
-    </script>
-  </head>
-  <body>
-    <p>Hello from your extension's UI.</p>
-    <button onclick="closeWithResult('ok')">Close</button>
-  </body>
+    }
+  </script>
+  <style>
+    :root {
+      --ableton-panel: #4E4E4E;
+      --ableton-button: #FFA500;
+      --ableton-text: #FFFFFF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--ableton-panel);
+      color: var(--ableton-text);
+      font-family: sans-serif;
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #bbb;
+    }
+    .bpm {
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--ableton-button);
+      line-height: 1;
+    }
+    .unit {
+      font-size: 12px;
+      color: #bbb;
+      margin-top: -8px;
+    }
+    button {
+      background-color: var(--ableton-button);
+      border: none;
+      padding: 6px 16px;
+      cursor: pointer;
+      color: #000;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <span class="label">Hello SawUp</span>
+  <span class="bpm">{{BPM}}</span>
+  <span class="unit">BPM</span>
+  <button onclick="closeWithResult({ status: 'closed' })">Close</button>
+</body>
 </html>
